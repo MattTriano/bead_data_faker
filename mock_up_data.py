@@ -6,6 +6,7 @@ from typing import Callable, Optional, Union
 import pandas as pd
 from faker import Faker
 
+
 def main() -> None:
     dir_path = Path(__file__).parent.joinpath("data").resolve()
     dir_path.mkdir(exist_ok=True, parents=True)
@@ -42,15 +43,11 @@ class BEADDataFaker:
         self.num_challengers = num_challengers
         self.num_challenges = num_challenges
         self.num_cais = num_cais
-        self.num_cai_challenges = int(
-            (pct_cais_challenged * self.num_cais / 100) // 1
-        )
+        self.num_cai_challenges = int((pct_cais_challenged * self.num_cais / 100) // 1)
         if pct_served > 100:
             raise ValueError(f"pct_served must be under 100%. Got {pct_served}")
         if pct_unserved > 100:
-            raise ValueError(
-                f"pct_unserved must be under 100%. Got {pct_unserved}"
-            )
+            raise ValueError(f"pct_unserved must be under 100%. Got {pct_unserved}")
         if pct_unserved + pct_served > 100:
             raise ValueError(
                 "pct_served and pct_unserved must sum to at most 100%. "
@@ -63,9 +60,7 @@ class BEADDataFaker:
     def setup_output_dir(self) -> None:
         self.output_dir.mkdir(exist_ok=True, parents=True)
 
-    def _get_data(
-        self, data_format: str, data_generator_func: Callable
-    ) -> pd.DataFrame:
+    def _get_data(self, data_format: str, data_generator_func: Callable) -> pd.DataFrame:
         file_path = self.output_dir.joinpath(f"{data_format}.csv")
         if self.remake_data or not file_path.is_file():
             data_generator_func()
@@ -73,14 +68,10 @@ class BEADDataFaker:
         return data_format_df
 
     def generate_data(self) -> None:
-        self.challengers_df = self._get_data(
-            "challengers", self._gen_challengers
-        )
+        self.challengers_df = self._get_data("challengers", self._gen_challengers)
         self.challenges_df = self._get_data("challenges", self._gen_challenges)
         self.cai_df = self._get_data("cai", self._gen_cais)
-        self.cai_challenges_df = self._get_data(
-            "cai_challenges", self._gen_cai_challenges
-        )
+        self.cai_challenges_df = self._get_data("cai_challenges", self._gen_cai_challenges)
         self.post_challenge_cai_df = self._get_data(
             "post_challenge_cai", self._gen_post_challenge_cais
         )
@@ -88,9 +79,7 @@ class BEADDataFaker:
             "post_challenge_locations", self._gen_post_challenge_locations
         )
         self.unserved_df = self._get_data("unserved", self._gen_unserved)
-        self.underserved_df = self._get_data(
-            "underserved", self._gen_underserved
-        )
+        self.underserved_df = self._get_data("underserved", self._gen_underserved)
 
     def _gen_challengers(self) -> None:
         records = []
@@ -99,11 +88,7 @@ class BEADDataFaker:
             if category == "B":
                 provider_id = random.randint(100000, 999999)
             else:
-                provider_id = (
-                    random.randint(100000, 999999)
-                    if random.choice([True, False])
-                    else ""
-                )
+                provider_id = random.randint(100000, 999999) if random.choice([True, False]) else ""
             record = {
                 "challenger": self.fake.uuid4(),
                 "category": category,
@@ -115,9 +100,7 @@ class BEADDataFaker:
                 "contact_phone": self.fake.numerify(text="###-###-####"),
             }
             records.append(record)
-        pd.DataFrame(records).to_csv(
-            self.output_dir.joinpath("challengers.csv"), index=False
-        )
+        pd.DataFrame(records).to_csv(self.output_dir.joinpath("challengers.csv"), index=False)
 
     def _gen_challenges(self) -> None:
         all_challengers = self.challengers_df["challenger"].copy()
@@ -219,9 +202,7 @@ class BEADDataFaker:
                 "latency": latency,
             }
             records.append(record)
-        pd.DataFrame(records).to_csv(
-            self.output_dir.joinpath("challenges.csv"), index=False
-        )
+        pd.DataFrame(records).to_csv(self.output_dir.joinpath("challenges.csv"), index=False)
 
     def _gen_cais(self) -> None:
         unique_entity_names = set()
@@ -298,9 +279,7 @@ class BEADDataFaker:
                 "availability": availability,
             }
             records.append(record)
-        pd.DataFrame(records).to_csv(
-            self.output_dir.joinpath("cai.csv"), index=False
-        )
+        pd.DataFrame(records).to_csv(self.output_dir.joinpath("cai.csv"), index=False)
 
     def _gen_cai_challenges(self) -> None:
         cai_challengers = (
@@ -361,9 +340,7 @@ class BEADDataFaker:
                 "availability": cai_row["availability"],
             }
             records.append(record)
-        pd.DataFrame(records).to_csv(
-            self.output_dir.joinpath("cai_challenges.csv"), index=False
-        )
+        pd.DataFrame(records).to_csv(self.output_dir.joinpath("cai_challenges.csv"), index=False)
 
     def _gen_post_challenge_locations(self) -> None:
         """I just want some mocked up some data, so I'm not attempting to
@@ -395,14 +372,10 @@ class BEADDataFaker:
             ["C", "G"]
         ) & self.cai_challenges_df["disposition"].isin(["A", "S", "N"])
         cais_to_remove = (
-            self.cai_challenges_df.loc[ineligible_cai_mask]
-            .copy()
-            .reset_index(drop=True)
+            self.cai_challenges_df.loc[ineligible_cai_mask].copy().reset_index(drop=True)
         )
         cais_to_add_or_affirm = (
-            self.cai_challenges_df.loc[affirmed_cai_mask]
-            .copy()
-            .reset_index(drop=True)
+            self.cai_challenges_df.loc[affirmed_cai_mask].copy().reset_index(drop=True)
         )
 
         cai_id_cols = [
@@ -435,20 +408,14 @@ class BEADDataFaker:
                 cais_to_add_or_affirm[self.cai_df.columns].copy(),
             ]
         )
-        eligible_cais_df = merged_cai_df.drop_duplicates(
-            subset=cai_id_cols, ignore_index=True
-        )
-        eligible_cais_df.to_csv(
-            self.output_dir.joinpath("post_challenge_cai.csv"), index=False
-        )
+        eligible_cais_df = merged_cai_df.drop_duplicates(subset=cai_id_cols, ignore_index=True)
+        eligible_cais_df.to_csv(self.output_dir.joinpath("post_challenge_cai.csv"), index=False)
 
     def _gen_unserved(self) -> None:
         self.post_challenge_locations_df.loc[
             self.post_challenge_locations_df["classification"] == "0",
             "location_id",
-        ].to_csv(
-            self.output_dir.joinpath("unserved.csv"), index=False, header=False
-        )
+        ].to_csv(self.output_dir.joinpath("unserved.csv"), index=False, header=False)
 
     def _gen_underserved(self) -> None:
         self.post_challenge_locations_df.loc[
@@ -459,6 +426,7 @@ class BEADDataFaker:
             index=False,
             header=False,
         )
+
 
 if __name__ == "__main__":
     main()
