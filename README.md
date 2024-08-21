@@ -4,7 +4,7 @@ This code generates datasets for testing and demonstrating the [UChicago BEAD Ch
 
 The `mock_up_data.py` script generates fake data that complies with (nearly) all of the specifications in the [BEAD Challenge Policy Notice](https://www.ntia.gov/sites/default/files/2023-11/bead_challenge_process_policy_notice.pdf#page=23).
 
-The `deface_bead_data.py` script loads those data files, introduces defects into the data, and outputs the damaged data into another directory.
+The `deface_bead_data.py` script loads those data files, introduces defects into some of the data files, and outputs the damaged data into another directory.
 
 ## Setup
 

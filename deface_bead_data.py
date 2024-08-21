@@ -135,6 +135,7 @@ class ChallengerDefectMaker:
     def make_defective_data(self):
         self.deface_challenger_ids()
         self.deface_webpages()
+        self.deface_phone_numbers()
 
     def deface_challenger_ids(self):
         n = self.get_n()
@@ -152,9 +153,18 @@ class ChallengerDefectMaker:
 
     def deface_webpages(self):
         n = self.get_n()
-        mask = self.df["webpage"] != ""
-        self.df.loc[mask, "webpage"] = self.df.loc[mask, "webpage"].str.replace("https://", "www.")
-        self.df.loc[mask, "webpage"] = self.df.loc[mask, "webpage"].str.replace("http://", "ftp://")
+        mask = self.df.sample(n=n, random_state=n).index
+        self.df.loc[mask, "webpage"] = (
+            self.df.loc[mask, "webpage"]
+            .str.replace("https://", "www.")
+            .str.replace("http://", "ftp://")
+        )
+
+    def deface_phone_numbers(self):
+        n = self.get_n()
+        print(n)
+        mask = self.df.sample(n=n, random_state=n).index
+        self.df.loc[mask, "contact_phone"] = [self.fake.phone_number() for i in range(n)]
 
 
 if __name__ == "__main__":
