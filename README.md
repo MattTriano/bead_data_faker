@@ -19,13 +19,17 @@ cd bead_data_faker
 
 Then create a `venv` and install requirements
 ```
-python -m venv .venv
-source .venv/bin/activate
+python -m venv your_venv
+source your_venv/bin/activate
 python -m pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-Now you're ready to 
+This installs required packages into the `your_venv` dir. The main packages are:
+* `pandas` (for data input, output, and manipulation),
+* `Faker` (for mocking up reasonable data), and
+* `bead_inspector`
+
 
 ## Usage
 
